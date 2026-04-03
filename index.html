@@ -128,7 +128,7 @@
             { h: "米饭", p: "mǐfàn", m: "Cơm trắng", ex: "你吃米饭 ma?", exp: "Nǐ chī mǐfàn ma?", exm: "Bạn ăn cơm trắng không?" },
             { h: "米", p: "mǐ", m: "Gạo", ex: "这是大米。", exp: "Zhè shì dàmǐ.", exm: "Đây là gạo." },
             { h: "要", p: "yào", m: "Muốn, cần", ex: "你要买什么？", exp: "Nǐ yào mǎi shénme?", exm: "Bạn muốn mua cái gì?" },
-            { h: "个", p: "gè", m: "Cái (lượng từ)", ex: "三个包子。", exp: "Sān ge bāozi.", exm: "Ba cái bánh bao." },
+            { h: "个", p: "gè", m: "Cái (lượng từ)", ex: "三個包子。", exp: "Sān ge bāozi.", exm: "Ba cái bánh bao." },
             { h: "碗", p: "wǎn", m: "Bát", ex: "一碗鸡蛋汤。", exp: "Yì wǎn jīdàn tāng.", exm: "Một bát canh trứng gà." },
             { h: "鸡蛋", p: "jīdàn", m: "Trứng gà", ex: "鸡蛋很好吃。", exp: "Jīdàn hěn hǎochī.", exm: "Trứng gà rất ngon." },
             { h: "鸡", p: "jī", m: "Gà", ex: "我不吃鸡。", exp: "Wǒ bù chī jī.", exm: "Tôi không ăn thịt gà." },
@@ -173,7 +173,6 @@
 
         function startQuiz() {
             quiz = [
-                // 8 Trắc nghiệm
                 { type: 'c', q: 'Từ "Cơm trắng" là gì?', opt: ['米饭', '馒头', '包子', '饺子'], a: '米饭' },
                 { type: 'c', q: 'Phiên âm của "啤酒" là gì?', opt: ['píjiǔ', 'píqiǔ', 'bíjiǔ', 'bíqiǔ'], a: 'píjiǔ' },
                 { type: 'c', q: '"Bánh màn thầu" là từ nào?', opt: ['馒头', '包子', '饺子', '面条儿'], a: '馒头' },
@@ -182,16 +181,14 @@
                 { type: 'c', q: 'Lượng từ cho bát canh là?', opt: ['个', '碗', '些', '只'], a: '碗' },
                 { type: 'c', q: '"Những cái này" là gì?', opt: ['这些', '那些', '一些', '谁些'], a: '这些' },
                 { type: 'c', q: 'Từ "汤" nghĩa là gì?', opt: ['Canh', 'Cơm', 'Rượu', 'Gà'], a: 'Canh' },
-                // 8 Điền từ
                 { type: 'f', q: 'Trưa (........) tôi đi nhà ăn.', h: 'zhōngwǔ', a: '中午' },
                 { type: 'f', q: 'Tôi ăn mì (........).', h: 'miàntiáor', a: '面条儿' },
                 { type: 'f', q: 'Ăn há cảo (........).', h: 'jiǎozi', a: '饺子' },
                 { type: 'f', q: 'Bánh bao (........).', h: 'bāozi', a: '包子' },
                 { type: 'f', q: 'Trứng gà (........).', h: 'jīdàn', a: '鸡蛋' },
-                { type: 'f', q: 'Bạn ăn gì? (你...什么?)', h: 'chī', a: '吃' },
+                { type: 'f', q: 'Bạn ăn gì? (你... ...什么?)', h: 'chī', a: '吃' },
                 { type: 'f', q: 'Muốn một số (........) cái.', h: 'yìxiē', a: '一些' },
                 { type: 'f', q: 'Uống rượu (........).', h: 'jiǔ', a: '酒' },
-                // 8 Sắp xếp
                 { type: 's', q: 'Dịch: Tôi ăn bánh màn thầu.', w: ['我', '吃', '馒头'], a: '我吃馒头' },
                 { type: 's', q: 'Dịch: Mary đi nhà ăn.', w: ['玛丽', '去', '食堂'], a: '玛丽去食堂' },
                 { type: 's', q: 'Dịch: Bạn ăn gì?', w: ['吃', '什么', '你'], a: '你吃什么' },
@@ -208,27 +205,40 @@
 
         function renderQ() {
             const data = quiz[curQ], area = document.getElementById('qArea'), btn = document.getElementById('nextBtn');
-            btn.innerText = "Kiểm tra"; selOrder = [];
+            btn.innerText = "Kiểm tra"; selOrder = []; btn.classList.replace('bg-emerald-600', 'bg-slate-800');
             document.getElementById('qCount').innerText = `${curQ+1}/24`;
             document.getElementById('pBar').style.width = ((curQ+1)/24*100) + "%";
             
             if(curQ < 8) { 
                 label("Dạng 1", "Trắc nghiệm"); 
-                area.innerHTML = `<h3 class="text-xl font-bold text-slate-700 mb-6">${data.q}</h3><div class="grid gap-3">${data.opt.map(o => `<button onclick="selC('${o}', this)" class="c-opt border-2 border-slate-100 p-4 rounded-2xl text-left hover:bg-emerald-50 hover:border-emerald-200 transition-all font-medium text-slate-600">${o}</button>`).join('')}</div>`; 
+                area.innerHTML = `
+                    <h3 class="text-2xl font-bold text-slate-700 mb-6">${data.q}</h3>
+                    <div class="grid gap-4">
+                        ${data.opt.map(o => `
+                            <button onclick="selC('${o}', this)" class="c-opt border-2 border-slate-100 p-5 rounded-2xl text-center hover:bg-emerald-50 hover:border-emerald-200 transition-all font-black text-3xl text-slate-600 shadow-sm">${o}</button>
+                        `).join('')}
+                    </div>`; 
             }
             else if(curQ < 16) { 
                 label("Dạng 2", "Dịch & Điền từ"); 
-                area.innerHTML = `<h3 class="text-xl font-bold text-slate-700 mb-2">${data.q}</h3><p class="text-sm text-slate-400 mb-6 font-medium">Gợi ý: ${data.h}</p><input type="text" id="fInp" class="w-full p-5 border-2 border-slate-100 rounded-[1.5rem] text-3xl text-center outline-none focus:border-emerald-400 focus:bg-emerald-50/30 transition-all font-bold text-emerald-700" placeholder="..." autocomplete="off">`; 
+                area.innerHTML = `
+                    <h3 class="text-2xl font-bold text-slate-700 mb-2">${data.q}</h3>
+                    <p class="text-lg text-slate-400 mb-6 font-medium">Gợi ý: ${data.h}</p>
+                    <input type="text" id="fInp" class="w-full p-6 border-2 border-emerald-100 rounded-[2rem] text-6xl text-center outline-none focus:border-emerald-400 focus:bg-emerald-50/30 transition-all font-black text-emerald-700" placeholder="..." autocomplete="off">`; 
             }
             else { 
                 label("Dạng 3", "Sắp xếp câu"); 
                 area.innerHTML = `
-                    <h3 class="text-xl font-bold text-slate-700 mb-6">${data.q}</h3>
-                    <div class="flex items-center gap-2 mb-6">
-                        <div id="sZone" class="flex-1 min-h-[60px] p-3 border-2 border-dashed border-emerald-200 rounded-2xl flex flex-wrap gap-2 bg-emerald-50/20"></div>
-                        <button onclick="resetSort()" class="w-12 h-12 flex items-center justify-center bg-slate-100 text-slate-500 rounded-xl hover:bg-red-100 hover:text-red-600 transition-colors shadow-sm"><i class="fas fa-undo-alt"></i></button>
+                    <h3 class="text-2xl font-bold text-slate-700 mb-8">${data.q}</h3>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div id="sZone" class="flex-1 min-h-[100px] p-4 border-2 border-dashed border-emerald-200 rounded-3xl flex flex-wrap gap-3 bg-emerald-50/20 items-center justify-center text-3xl font-black text-emerald-800"></div>
+                        <button onclick="resetSort()" class="w-14 h-14 flex items-center justify-center bg-slate-100 text-slate-500 rounded-2xl hover:bg-red-100 hover:text-red-600 transition-colors shadow-md text-xl"><i class="fas fa-undo-alt"></i></button>
                     </div>
-                    <div class="flex flex-wrap gap-3 justify-center">${data.w.sort(()=>Math.random()-0.5).map(w => `<button onclick="selS('${w}', this)" class="s-btn bg-white px-5 py-3 rounded-xl font-bold text-slate-700 shadow-sm">${w}</button>`).join('')}</div>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        ${data.w.sort(()=>Math.random()-0.5).map(w => `
+                            <button onclick="selS('${w}', this)" class="s-btn bg-white px-6 py-4 rounded-2xl font-black text-3xl text-slate-700 shadow-md border-2 border-slate-100">${w}</button>
+                        `).join('')}
+                    </div>
                 `; 
             }
         }
@@ -244,7 +254,7 @@
         window.selS = (w, e) => { 
             e.classList.add('selected-word'); 
             selOrder.push(w); 
-            document.getElementById('sZone').innerHTML += `<span class="answer-tag bg-white border border-emerald-200 text-emerald-700 font-bold px-3 py-1.5 rounded-lg shadow-sm">${w}</span>`; 
+            document.getElementById('sZone').innerHTML += `<span class="answer-tag bg-white border border-emerald-200 text-emerald-700 font-bold px-4 py-2 rounded-xl shadow-sm">${w}</span>`; 
         };
 
         window.resetSort = () => {
@@ -267,10 +277,10 @@
             
             if(isCorrect) {
                 score++;
-                area.innerHTML += `<div class="mt-6 p-4 bg-emerald-100 text-emerald-700 rounded-2xl font-bold flex items-center animate-bounce"><i class="fas fa-check-circle mr-2 text-xl"></i> Tuyệt vời! Chính xác.</div>`;
+                area.innerHTML += `<div class="mt-6 p-5 bg-emerald-100 text-emerald-700 rounded-2xl font-bold flex items-center animate-bounce text-xl"><i class="fas fa-check-circle mr-3 text-2xl"></i> Tuyệt vời! Chính xác.</div>`;
             } else {
                 wrongs.push({q: data.q, a: data.a, u: userAns || "Bỏ trống"});
-                area.innerHTML += `<div class="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl font-bold border border-red-100"><div class="flex items-center mb-1"><i class="fas fa-times-circle mr-2 text-xl"></i> Chưa đúng rồi...</div><div class="text-sm opacity-80 pl-7 font-medium">Đáp án: ${data.a}</div></div>`;
+                area.innerHTML += `<div class="mt-6 p-5 bg-red-50 text-red-600 rounded-2xl font-bold border border-red-100"><div class="flex items-center mb-1 text-xl"><i class="fas fa-times-circle mr-3 text-2xl"></i> Chưa đúng rồi...</div><div class="text-lg opacity-80 pl-9 font-black">Đáp án: ${data.a}</div></div>`;
             }
             btn.innerText = "Tiếp theo";
             btn.classList.replace('bg-slate-800', 'bg-emerald-600');
@@ -283,10 +293,10 @@
             if(wrongs.length > 0) {
                 document.getElementById('errorBox').classList.remove('hidden');
                 document.getElementById('errorList').innerHTML = wrongs.map(w => `
-                    <div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-red-400">
-                        <div class="font-bold text-slate-700 text-sm">${w.q}</div>
-                        <div class="text-xs text-slate-400 mt-1">Bạn chọn: <span class="text-red-400">${w.u}</span></div>
-                        <div class="text-xs text-emerald-600 font-bold">Đáp án đúng: ${w.a}</div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border-l-8 border-red-400">
+                        <div class="font-bold text-slate-700 text-lg">${w.q}</div>
+                        <div class="text-sm text-slate-400 mt-1">Bạn chọn: <span class="text-red-400">${w.u}</span></div>
+                        <div class="text-xl text-emerald-600 font-black mt-1">Đáp án đúng: ${w.a}</div>
                     </div>
                 `).join('');
             } else {
