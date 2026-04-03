@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ms. Thúy · Hán Ngữ 1 - Bài 7 (Premium)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; }
+        
+        .flip-card { background-color: transparent; width: 100%; height: 480px; perspective: 1500px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; border-radius: 2rem; }
+        .flipped { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 2rem; display: flex; flex-direction: column; padding: 2rem; border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+        .card-front { background: white; justify-content: center; }
+        .card-back { background: #f0fdf4; transform: rotateY(180deg); text-align: left; justify-content: flex-start; overflow-y: auto; }
+        
+        .btn-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-hover:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
+        .btn-hover:active { transform: translateY(-1px); }
+
+        .s-btn { transition: all 0.2s; border: 2px solid #e2e8f0; }
+        .s-btn:hover:not(.selected-word) { border-color: #10b981; background: #ecfdf5; color: #065f46; }
+        .selected-word { opacity: 0.2; pointer-events: none; background: #f1f5f9; }
+        
+        .answer-tag { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #d1fae5; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-green-50 to-emerald-100 min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-2xl mx-auto">
+        <div id="homeSection" class="text-center space-y-6">
+            <div class="inline-block px-4 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold tracking-widest uppercase mb-2">Hán Ngữ 1 · Bài 7</div>
+            <h1 class="text-4xl font-black text-slate-800 tracking-tight">🥢 Bạn ăn gì?</h1>
+            <p class="text-slate-500 italic">Khám phá 24 từ vựng cùng Ms. Thúy</p>
+            
+            <div class="flip-card">
+                <div class="flip-card-inner shadow-2xl" id="flashInner">
+                    <div class="card-front cursor-pointer" onclick="toggleFlip()">
+                        <div class="flex justify-center mb-6">
+                            <button onclick="event.stopPropagation(); speak('word')" class="btn-hover w-16 h-16 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-volume-up text-2xl"></i>
+                            </button>
+                        </div>
+                        <div class="text-7xl font-bold text-slate-800 mb-4" id="fHanzi">中午</div>
+                        <div class="text-2xl text-emerald-600 font-semibold tracking-wide" id="fPinyin">zhōngwǔ</div>
+                        <div class="mt-12 flex items-center justify-center text-slate-300 text-sm font-medium">
+                            <i class="fas fa-mouse-pointer mr-2"></i> Chạm để lật thẻ
+                        </div>
+                    </div>
+                    <div class="card-back cursor-pointer" onclick="toggleFlip()">
+                        <span class="text-xs font-black text-emerald-500 uppercase tracking-widest">Nghĩa của từ:</span>
+                        <div class="text-4xl font-bold text-slate-800 mt-2 mb-8 border-b-4 border-emerald-200 inline-block" id="fMeaning">Buổi trưa</div>
+                        
+                        <div class="bg-white/80 backdrop-blur-sm p-6 rounded-3xl border border-emerald-100 shadow-inner">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-xs font-bold text-slate-400 uppercase">Ví dụ minh họa</span>
+                                <button onclick="event.stopPropagation(); speak('ex')" class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center btn-hover">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                            </div>
+                            <p class="text-2xl text-slate-800 font-bold leading-tight mb-2" id="fEx">中午我去食堂吃饭。</p>
+                            <p class="text-emerald-600 font-bold mb-3" id="fExPinyin">Zhōngwǔ wǒ qù shítáng chī fàn.</p>
+                            <p class="text-slate-500 leading-relaxed border-t pt-3 italic" id="fExMeaning">Buổi trưa tôi đến nhà ăn ăn cơm.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 items-center max-w-sm mx-auto">
+                <button onclick="changeFlash(-1)" class="w-16 h-16 bg-white text-emerald-600 rounded-2xl shadow-md btn-hover flex items-center justify-center text-xl"><i class="fas fa-chevron-left"></i></button>
+                <button onclick="startQuiz()" class="flex-1 h-16 bg-emerald-600 text-white rounded-2xl font-black text-lg shadow-lg btn-hover tracking-widest uppercase">Bắt đầu Quiz</button>
+                <button onclick="changeFlash(1)" class="w-16 h-16 bg-white text-emerald-600 rounded-2xl shadow-md btn-hover flex items-center justify-center text-xl"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <div id="quizSection" class="hidden bg-white/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-2xl border border-white">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <div id="quizStepLabel" class="text-[10px] font-black bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md uppercase mb-1 inline-block">Dạng 1</div>
+                    <h2 id="quizTitle" class="text-2xl font-bold text-slate-800">Trắc nghiệm</h2>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm font-bold text-slate-400" id="qCount">1/24</span>
+                    <div class="h-2 w-24 bg-slate-100 rounded-full mt-2 overflow-hidden">
+                        <div id="pBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-500" style="width: 4%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="qArea" class="min-h-[320px]"></div>
+
+            <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
+                <button onclick="location.reload()" class="text-slate-400 font-bold hover:text-red-400 transition-colors">Hủy bài</button>
+                <button id="nextBtn" onclick="handleNext()" class="bg-slate-800 text-white px-12 py-4 rounded-2xl font-bold btn-hover shadow-lg">Kiểm tra</button>
+            </div>
+        </div>
+
+        <div id="resSection" class="hidden bg-white rounded-[3.5rem] p-12 shadow-2xl text-center border-4 border-emerald-50">
+            <div id="resIcon" class="text-8xl mb-6 scale-110">🏆</div>
+            <h2 class="text-4xl font-black text-slate-800 mb-2">Tuyệt vời!</h2>
+            <p id="resScore" class="text-2xl text-emerald-600 font-bold mb-8"></p>
+            
+            <div id="errorBox" class="text-left bg-slate-50 p-6 rounded-[2rem] mb-8 hidden">
+                <h3 class="font-bold text-slate-700 mb-4 flex items-center">
+                    <i class="fas fa-exclamation-circle text-orange-400 mr-2"></i> Cần lưu ý các câu:
+                </h3>
+                <div id="errorList" class="space-y-3 max-h-60 overflow-y-auto pr-2"></div>
+            </div>
+            
+            <button onclick="location.reload()" class="w-full bg-emerald-600 text-white py-5 rounded-3xl font-black text-xl shadow-xl btn-hover uppercase tracking-widest">Làm lại từ đầu</button>
+        </div>
+    </div>
+
+    <script>
+        const vocabData = [
+            { h: "中午", p: "zhōngwǔ", m: "Buổi trưa", ex: "中午我去食堂吃饭。", exp: "Zhōngwǔ wǒ qù shítáng chī fàn.", exm: "Buổi trưa tôi đến nhà ăn ăn cơm." },
+            { h: "吃", p: "chī", m: "Ăn", ex: "你吃什么？", exp: "Nǐ chī shénme?", exm: "Bạn ăn gì?" },
+            { h: "饭", p: "fàn", m: "Cơm", ex: "我不吃饭。", exp: "Wǒ bù chī fàn.", exm: "Tôi không ăn cơm." },
+            { h: "食堂", p: "shítáng", m: "Nhà ăn", ex: "食堂很大。", exp: "Shítáng hěn dà.", exm: "Nhà ăn rất lớn." },
+            { h: "馒头", p: "mántou", m: "Bánh màn thầu", ex: "我要两个馒头。", exp: "Wǒ yào liǎng ge mántou.", exm: "Tôi muốn hai cái màn thầu." },
+            { h: "米饭", p: "mǐfàn", m: "Cơm trắng", ex: "你吃米饭 ma?", exp: "Nǐ chī mǐfàn ma?", exm: "Bạn ăn cơm trắng không?" },
+            { h: "米", p: "mǐ", m: "Gạo", ex: "这是大米。", exp: "Zhè shì dàmǐ.", exm: "Đây là gạo." },
+            { h: "要", p: "yào", m: "Muốn, cần", ex: "你要买什么？", exp: "Nǐ yào mǎi shénme?", exm: "Bạn muốn mua cái gì?" },
+            { h: "个", p: "gè", m: "Cái (lượng từ)", ex: "三个包子。", exp: "Sān ge bāozi.", exm: "Ba cái bánh bao." },
+            { h: "碗", p: "wǎn", m: "Bát", ex: "一碗鸡蛋汤。", exp: "Yì wǎn jīdàn tāng.", exm: "Một bát canh trứng gà." },
+            { h: "鸡蛋", p: "jīdàn", m: "Trứng gà", ex: "鸡蛋很好吃。", exp: "Jīdàn hěn hǎochī.", exm: "Trứng gà rất ngon." },
+            { h: "鸡", p: "jī", m: "Gà", ex: "我不吃鸡。", exp: "Wǒ bù chī jī.", exm: "Tôi không ăn thịt gà." },
+            { h: "蛋", p: "dàn", m: "Trứng", ex: "这是什么蛋？", exp: "Zhè shì shénme dàn?", exm: "Đây là trứng gì?" },
+            { h: "汤", p: "tāng", m: "Canh", ex: "这个汤很好喝。", exp: "Zhège tāng hěn hǎohē.", exm: "Món canh này rất ngon." },
+            { h: "啤酒", p: "píjiǔ", m: "Bia", ex: "他不喝啤酒。", exp: "Tā bù hē píjiǔ.", exm: "Anh ấy không uống bia." },
+            { h: "酒", p: "jiǔ", m: "Rượu", ex: "你要喝什么酒？", exp: "Nǐ yào hē shénme jiǔ?", exm: "Bạn muốn uống rượu gì?" },
+            { h: "这些", p: "zhèxiē", m: "Những cái này", ex: "这些都是我的。", exp: "Zhèxiē dōu shì wǒ de.", exm: "Những cái này đều là của tôi." },
+            { h: "些", p: "xiē", m: "Vài, những", ex: "一些人。", exp: "Yìxiē rén.", exm: "Một số người." },
+            { h: "一些", p: "yìxiē", m: "Một số", ex: "我要买一些东西。", exp: "Wǒ yào mǎi yìxiē dōngxi.", exm: "Tôi muốn mua một số đồ." },
+            { h: "那些", p: "nàxiē", m: "Những cái kia", ex: "那些是什么？", exp: "Nàxiē shì shénme?", exm: "Những cái kia là gì?" },
+            { h: "饺子", p: "jiǎozi", m: "Há cảo", ex: "我喜欢吃饺子。", exp: "Wǒ xǐhuan chī jiǎozi.", exm: "Tôi thích ăn há cảo." },
+            { h: "包子", p: "bāozi", m: "Bánh bao", ex: "你要几个包子？", exp: "Nǐ yào jǐ ge bāozi?", exm: "Bạn muốn mấy cái bánh bao?" },
+            { h: "面条儿", p: "miàntiáor", m: "Mì", ex: "他吃面条儿。", exp: "Tā chī miàntiáor.", exm: "Anh ấy ăn mì." },
+            { h: "玛丽", p: "Mǎlì", m: "Mary", ex: "玛丽去食堂吃饭。", exp: "Mǎlì qù shítáng chī fàn.", exm: "Mary đến nhà ăn ăn cơm." }
+        ];
+
+        let curF = 0, curQ = 0, score = 0, quiz = [], selOrder = [], wrongs = [];
+
+        function toggleFlip() { document.getElementById('flashInner').classList.toggle('flipped'); }
+
+        function changeFlash(dir) {
+            curF = (curF + dir + vocabData.length) % vocabData.length;
+            document.getElementById('flashInner').classList.remove('flipped');
+            setTimeout(() => {
+                document.getElementById('fHanzi').innerText = vocabData[curF].h;
+                document.getElementById('fPinyin').innerText = vocabData[curF].p;
+                document.getElementById('fMeaning').innerText = vocabData[curF].m;
+                document.getElementById('fEx').innerText = vocabData[curF].ex;
+                document.getElementById('fExPinyin').innerText = vocabData[curF].exp;
+                document.getElementById('fExMeaning').innerText = vocabData[curF].exm;
+            }, 200);
+        }
+
+        function speak(type) {
+            window.speechSynthesis.cancel();
+            const text = type === 'word' ? vocabData[curF].h : vocabData[curF].ex;
+            let u = new SpeechSynthesisUtterance(text);
+            u.lang = 'zh-CN'; u.rate = 0.75;
+            window.speechSynthesis.speak(u);
+        }
+
+        function startQuiz() {
+            quiz = [
+                // 8 Trắc nghiệm
+                { type: 'c', q: 'Từ "Cơm trắng" là gì?', opt: ['米饭', '馒头', '包子', '饺子'], a: '米饭' },
+                { type: 'c', q: 'Phiên âm của "啤酒" là gì?', opt: ['píjiǔ', 'píqiǔ', 'bíjiǔ', 'bíqiǔ'], a: 'píjiǔ' },
+                { type: 'c', q: '"Bánh màn thầu" là từ nào?', opt: ['馒头', '包子', '饺子', '面条儿'], a: '馒头' },
+                { type: 'c', q: '"Nhà ăn" tiếng Trung là gì?', opt: ['餐厅', '食堂', '商店', '学校'], a: '食堂' },
+                { type: 'c', q: 'Từ nào nghĩa là "Muốn/Cần"?', opt: ['要', '吃', '喝', '去'], a: '要' },
+                { type: 'c', q: 'Lượng từ cho bát canh là?', opt: ['个', '碗', '些', '只'], a: '碗' },
+                { type: 'c', q: '"Những cái này" là gì?', opt: ['这些', '那些', '一些', '谁些'], a: '这些' },
+                { type: 'c', q: 'Từ "汤" nghĩa là gì?', opt: ['Canh', 'Cơm', 'Rượu', 'Gà'], a: 'Canh' },
+                // 8 Điền từ
+                { type: 'f', q: 'Trưa (........) tôi đi nhà ăn.', h: 'zhōngwǔ', a: '中午' },
+                { type: 'f', q: 'Tôi ăn mì (........).', h: 'miàntiáor', a: '面条儿' },
+                { type: 'f', q: 'Ăn há cảo (........).', h: 'jiǎozi', a: '饺子' },
+                { type: 'f', q: 'Bánh bao (........).', h: 'bāozi', a: '包子' },
+                { type: 'f', q: 'Trứng gà (........).', h: 'jīdàn', a: '鸡蛋' },
+                { type: 'f', q: 'Bạn ăn gì? (你...什么?)', h: 'chī', a: '吃' },
+                { type: 'f', q: 'Muốn một số (........) cái.', h: 'yìxiē', a: '一些' },
+                { type: 'f', q: 'Uống rượu (........).', h: 'jiǔ', a: '酒' },
+                // 8 Sắp xếp
+                { type: 's', q: 'Dịch: Tôi ăn bánh màn thầu.', w: ['我', '吃', '馒头'], a: '我吃馒头' },
+                { type: 's', q: 'Dịch: Mary đi nhà ăn.', w: ['玛丽', '去', '食堂'], a: '玛丽去食堂' },
+                { type: 's', q: 'Dịch: Bạn ăn gì?', w: ['吃', '什么', '你'], a: '你吃什么' },
+                { type: 's', q: 'Dịch: Một bát canh trứng gà.', w: ['碗', '一', '鸡蛋汤'], a: '一碗鸡蛋汤' },
+                { type: 's', q: 'Dịch: Tôi không uống bia.', w: ['不', '喝', '我', '啤酒'], a: '我不喝啤酒' },
+                { type: 's', q: 'Dịch: Những cái này là gì?', w: ['是', '这些', '什么'], a: '这些是什么' },
+                { type: 's', q: 'Dịch: Tôi muốn 2 cái bánh bao.', w: ['要', '两个', '我', '包子'], a: '我要两个包子' },
+                { type: 's', q: 'Dịch: Ăn cơm trắng.', w: ['吃', '米饭'], a: '吃米饭' }
+            ];
+            document.getElementById('homeSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            renderQ();
+        }
+
+        function renderQ() {
+            const data = quiz[curQ], area = document.getElementById('qArea'), btn = document.getElementById('nextBtn');
+            btn.innerText = "Kiểm tra"; selOrder = [];
+            document.getElementById('qCount').innerText = `${curQ+1}/24`;
+            document.getElementById('pBar').style.width = ((curQ+1)/24*100) + "%";
+            
+            if(curQ < 8) { 
+                label("Dạng 1", "Trắc nghiệm"); 
+                area.innerHTML = `<h3 class="text-xl font-bold text-slate-700 mb-6">${data.q}</h3><div class="grid gap-3">${data.opt.map(o => `<button onclick="selC('${o}', this)" class="c-opt border-2 border-slate-100 p-4 rounded-2xl text-left hover:bg-emerald-50 hover:border-emerald-200 transition-all font-medium text-slate-600">${o}</button>`).join('')}</div>`; 
+            }
+            else if(curQ < 16) { 
+                label("Dạng 2", "Dịch & Điền từ"); 
+                area.innerHTML = `<h3 class="text-xl font-bold text-slate-700 mb-2">${data.q}</h3><p class="text-sm text-slate-400 mb-6 font-medium">Gợi ý: ${data.h}</p><input type="text" id="fInp" class="w-full p-5 border-2 border-slate-100 rounded-[1.5rem] text-3xl text-center outline-none focus:border-emerald-400 focus:bg-emerald-50/30 transition-all font-bold text-emerald-700" placeholder="..." autocomplete="off">`; 
+            }
+            else { 
+                label("Dạng 3", "Sắp xếp câu"); 
+                area.innerHTML = `
+                    <h3 class="text-xl font-bold text-slate-700 mb-6">${data.q}</h3>
+                    <div class="flex items-center gap-2 mb-6">
+                        <div id="sZone" class="flex-1 min-h-[60px] p-3 border-2 border-dashed border-emerald-200 rounded-2xl flex flex-wrap gap-2 bg-emerald-50/20"></div>
+                        <button onclick="resetSort()" class="w-12 h-12 flex items-center justify-center bg-slate-100 text-slate-500 rounded-xl hover:bg-red-100 hover:text-red-600 transition-colors shadow-sm"><i class="fas fa-undo-alt"></i></button>
+                    </div>
+                    <div class="flex flex-wrap gap-3 justify-center">${data.w.sort(()=>Math.random()-0.5).map(w => `<button onclick="selS('${w}', this)" class="s-btn bg-white px-5 py-3 rounded-xl font-bold text-slate-700 shadow-sm">${w}</button>`).join('')}</div>
+                `; 
+            }
+        }
+
+        function label(l, t) { document.getElementById('quizStepLabel').innerText = l; document.getElementById('quizTitle').innerText = t; }
+        
+        window.selC = (v, e) => { 
+            document.querySelectorAll('.c-opt').forEach(x => { x.classList.remove('border-emerald-500','bg-emerald-50','text-emerald-700','font-bold'); });
+            e.classList.add('border-emerald-500','bg-emerald-50','text-emerald-700','font-bold'); 
+            selOrder = [v]; 
+        };
+
+        window.selS = (w, e) => { 
+            e.classList.add('selected-word'); 
+            selOrder.push(w); 
+            document.getElementById('sZone').innerHTML += `<span class="answer-tag bg-white border border-emerald-200 text-emerald-700 font-bold px-3 py-1.5 rounded-lg shadow-sm">${w}</span>`; 
+        };
+
+        window.resetSort = () => {
+            selOrder = [];
+            document.getElementById('sZone').innerHTML = "";
+            document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('selected-word'));
+        };
+
+        function handleNext() {
+            const btn = document.getElementById('nextBtn');
+            if(btn.innerText === "Tiếp theo") { curQ++; if(curQ<24) renderQ(); else showRes(); return; }
+            
+            const data = quiz[curQ]; let userAns = "";
+            if(data.type==='c') userAns = selOrder[0];
+            else if(data.type==='f') userAns = document.getElementById('fInp').value.trim();
+            else userAns = selOrder.join('');
+
+            const isCorrect = (userAns === data.a);
+            const area = document.getElementById('qArea');
+            
+            if(isCorrect) {
+                score++;
+                area.innerHTML += `<div class="mt-6 p-4 bg-emerald-100 text-emerald-700 rounded-2xl font-bold flex items-center animate-bounce"><i class="fas fa-check-circle mr-2 text-xl"></i> Tuyệt vời! Chính xác.</div>`;
+            } else {
+                wrongs.push({q: data.q, a: data.a, u: userAns || "Bỏ trống"});
+                area.innerHTML += `<div class="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl font-bold border border-red-100"><div class="flex items-center mb-1"><i class="fas fa-times-circle mr-2 text-xl"></i> Chưa đúng rồi...</div><div class="text-sm opacity-80 pl-7 font-medium">Đáp án: ${data.a}</div></div>`;
+            }
+            btn.innerText = "Tiếp theo";
+            btn.classList.replace('bg-slate-800', 'bg-emerald-600');
+        }
+
+        function showRes() {
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resSection').classList.remove('hidden');
+            document.getElementById('resScore').innerText = `${score}/24 câu chính xác`;
+            if(wrongs.length > 0) {
+                document.getElementById('errorBox').classList.remove('hidden');
+                document.getElementById('errorList').innerHTML = wrongs.map(w => `
+                    <div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-red-400">
+                        <div class="font-bold text-slate-700 text-sm">${w.q}</div>
+                        <div class="text-xs text-slate-400 mt-1">Bạn chọn: <span class="text-red-400">${w.u}</span></div>
+                        <div class="text-xs text-emerald-600 font-bold">Đáp án đúng: ${w.a}</div>
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('resIcon').innerText = "👑";
+            }
+        }
+    </script>
+</body>
+</html>
